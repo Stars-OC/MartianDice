@@ -6,7 +6,6 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
 import xyz.starsoc.core.impl.GameOperationImpl;
-import xyz.starsoc.file.Config;
 import xyz.starsoc.file.Message;
 import xyz.starsoc.pojo.Dices;
 import xyz.starsoc.pojo.GameCommand;
@@ -112,8 +111,7 @@ public class GameOperation implements GameOperationImpl {
                     sendMessage("参数不足", userId);
                     break;
                 }
-                lock(userId,commands[1]);
-                break;
+                return lock(userId,commands[1]);
             case "total":
                 getUserTotal(userId);
                 return true;
@@ -124,6 +122,10 @@ public class GameOperation implements GameOperationImpl {
     private void getUserTotal(long userId) {
         User user = playerList.get(userId);
         Dices resultDices = user.getResultDices();
+        if (resultDices.getDiceSix() != 0){
+            sendMessage(message.getMustLock(), userId);
+            return;
+        }
         if (resultDices.getSize() != 0){
             sendMessage(message.getFailTotal());
             return;
@@ -148,8 +150,8 @@ public class GameOperation implements GameOperationImpl {
                 .replace("%diceThree%", String.valueOf(diceThree))
                 .replace("%diceFour%", String.valueOf(diceFour))
                 .replace("%diceSix%", String.valueOf(diceSix))
-                .replace("%lockSize%", String.valueOf(lockDices.getSize())
-                .replace("%score%",score + ""))
+                .replace("%lockSize%", String.valueOf(lockDices.getSize()))
+                .replace("%score%",score + "")
                 , userId);
         if (user.getScore() > 25){
             gameData.setWillEnd(true);
@@ -161,25 +163,25 @@ public class GameOperation implements GameOperationImpl {
         User user = playerList.get(userId);
     }
 
-    private void lock(long userId, String command) {
+    private boolean lock(long userId, String command) {
         User user = playerList.get(userId);
-        if (user.getResultDices().getDiceSix() != 0){
-            sendMessage(message.getFailLock().replace("%dice%", "6"), userId);
-            return;
+        if (user.getResultDices().getSize() == 0) {
+            sendMessage(message.getAlreadyLock(), userId);
+            return false;
         }
         int dice;
         int result = 0;
+        Dices lockDices = user.getLockDices();
         try{
-            Dices lockDices = user.getLockDices();
+
             dice = Integer.parseInt(command);
             Dices resultDices = user.getResultDices();
-
             switch (dice){
                 case 1:
                     result = resultDices.getDiceOne();
                     if (lockDices.getDiceOne() != 0){
                         sendMessage(message.getFailLock().replace("%dice%", dice+""), userId);
-                        return;
+                        return false;
                     }
                     lockDices.setDiceOne(result);
                     break;
@@ -187,7 +189,7 @@ public class GameOperation implements GameOperationImpl {
                     result = resultDices.getDiceTwo();
                     if (lockDices.getDiceTwo() != 0){
                         sendMessage(message.getFailLock().replace("%dice%", dice+""), userId);
-                        return;
+                        return false;
                     }
                     lockDices.setDiceTwo(result);
                     break;
@@ -195,7 +197,7 @@ public class GameOperation implements GameOperationImpl {
                     result = resultDices.getDiceThree();
                     if (lockDices.getDiceThree() != 0){
                         sendMessage(message.getFailLock().replace("%dice%", dice+""), userId);
-                        return;
+                        return false;
                     }
                     lockDices.setDiceThree(result);
                     break;
@@ -213,16 +215,32 @@ public class GameOperation implements GameOperationImpl {
             }
         }catch (Exception e){
             sendMessage("参数错误", userId);
-            return;
+            return false;
         }
         sendMessage(message.getSuccessLock()
                         .replace("%dice%", String.valueOf(dice))
                         .replace("%diceSize%", String.valueOf(result))
+                        .replace("%diceOne%", String.valueOf(lockDices.getDiceOne()))
+                        .replace("%diceTwo%", String.valueOf(lockDices.getDiceTwo()))
+                        .replace("%diceThree%", String.valueOf(lockDices.getDiceThree()))
+                        .replace("%diceFour%", String.valueOf(lockDices.getDiceFour()))
+                        .replace("%diceSix%", String.valueOf(lockDices.getDiceSix()))
+                        .replace("%lockSize%", String.valueOf(lockDices.getSize()))
                 ,userId);
+        user.setResultDices(new Dices());
+        if (lockDices.getSize() == 13){
+            getUserTotal(userId);
+            return true;
+        }
+        return false;
     }
 
     private boolean roll(long userId) {
         User user = playerList.get(userId);
+        if (user.getResultDices().getDiceSix() != 0){
+            sendMessage(message.getMustLock(), userId);
+            return false;
+        }
         Dices lockDices = user.getLockDices();
         user.setResultDices(new Dices());
         int lockSize = lockDices.getSize();
@@ -262,6 +280,7 @@ public class GameOperation implements GameOperationImpl {
                 .replace("%diceSix%", String.valueOf(resultDices.getDiceSix()))
                 .replace("%lockSize%", String.valueOf(lockDices.getSize()))
                 ,userId);
+
         return false;
     }
 
@@ -310,7 +329,13 @@ public class GameOperation implements GameOperationImpl {
     public void guideGame(long userId) {
         User user = playerList.get(userId);
         Dices resultDices = user.getResultDices();
-        if (resultDices.getSize() == 0)  sendMessage(message.getFirstGuide(), userId);
+        Dices lockDices = user.getLockDices();
+        if (lockDices.getSize() == 0 && resultDices.getSize() == 0)  {
+            try {
+                gameData.getCommands().put(new GameCommand(userId, "roll"));
+            } catch (InterruptedException ignore) {}
+            return;
+        }
         if (resultDices.getDiceSix() == 0) sendMessage(message.getNoLockGuide(), userId);
         else sendMessage(message.getLockGuide(), userId);
     }

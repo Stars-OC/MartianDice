@@ -20,9 +20,14 @@ object Message : AutoSavePluginConfig("message"){
 
     val successRoll by value("你成功将骰子扔出，结果是: \n 人: %diceOne%  牛: %diceTwo%  鸡: %diceThree% \n 激光: %diceFour% 坦克: %diceSix%\n%diceSix% 坦克将被锁定，当前锁定数量 %lockSize%")
     val failRoll by value("你已经把骰子都扔了，不能再扔了，已帮你跳过回合")
-    val successLock by value("你成功将%dice%锁定，锁定的数量为 %diceSize%")
+    val successLock by value("你成功将%dice%锁定， 当前锁定的有\n" +
+            " 人: %diceOne%  牛: %diceTwo%  鸡: %diceThree% \n" +
+            " 激光: %diceFour% 坦克: %diceSix%\n" +
+            "%diceSix% 坦克被锁定，当前锁定数量 %lockSize%")
+    val mustLock by value("你必须锁定一个骰子，才能进行操作")
     val failLock by value("你已经锁定过%dice%了，不能再锁定了\n" +
             "‘1’是人面，‘2’是牛面，‘3’是鸡面，‘4’是激光面，‘6’是坦克面")
+    val alreadyLock by value("你上回合已经锁定过骰子了！不能再锁定了")
     val successTotal by value("你结束了你的回合，你的分数为 %score%，结果为\n" +
             " 人: %diceOne%  牛: %diceTwo%  鸡: %diceThree% \n" +
             " 激光: %diceFour% 坦克: %diceSix%\n" +
@@ -31,8 +36,8 @@ object Message : AutoSavePluginConfig("message"){
 
     val willEnd by value("已有玩家超过 25 分，游戏在此大轮轮完后进行结束游戏")
 
-    val firstGuide by value("轮到你的回合，请@我 发送 roll 投掷骰子")
     val lockGuide by value("轮到你的回合， 你投到了坦克面 导致骰子锁定了\n" +
+            "你必须发送 lock 骰子面(1,2,3,4,6) 锁定骰子\n" +
             "请@我 发送 roll 再次投掷骰子\n" +
             "或者发送 total 计算分数(会自动将你剩余的骰子进行计算)\n" +
             "‘1’是人面，‘2’是牛面，‘3’是鸡面，‘4’是激光面，‘6’是坦克面")
