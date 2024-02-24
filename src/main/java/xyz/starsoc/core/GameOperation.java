@@ -38,6 +38,7 @@ public class GameOperation implements GameOperationImpl {
     @Override
     public String createGame(long botId, long groupId, long id) {
         if (!gameData.getPlayOrder().isEmpty()) return message.getAlreadyStart();
+        if (!gameData.getPlayerList().isEmpty()) return message.getAlreadyCreate();
         playerList.clear();
         gameData.getCommands().clear();
         gameData.getPlayOrder().clear();
@@ -148,7 +149,7 @@ public class GameOperation implements GameOperationImpl {
                 .replace("%diceFour%", String.valueOf(diceFour))
                 .replace("%diceSix%", String.valueOf(diceSix))
                 .replace("%lockSize%", String.valueOf(lockDices.getSize())
-                .replace("%score%",user.getScore() + ""))
+                .replace("%score%",score + ""))
                 , userId);
         if (user.getScore() > 25){
             gameData.setWillEnd(true);
@@ -223,6 +224,7 @@ public class GameOperation implements GameOperationImpl {
     private boolean roll(long userId) {
         User user = playerList.get(userId);
         Dices lockDices = user.getLockDices();
+        user.setResultDices(new Dices());
         int lockSize = lockDices.getSize();
         int resultSize = 13 - lockSize;
         if (resultSize == 0) {
@@ -309,8 +311,8 @@ public class GameOperation implements GameOperationImpl {
         User user = playerList.get(userId);
         Dices resultDices = user.getResultDices();
         if (resultDices.getSize() == 0)  sendMessage(message.getFirstGuide(), userId);
-        if (resultDices.getDiceSix() == 0) sendMessage(message.getLockGuide(), userId);
-        else sendMessage(message.getNoLockGuide(), userId);
+        if (resultDices.getDiceSix() == 0) sendMessage(message.getNoLockGuide(), userId);
+        else sendMessage(message.getLockGuide(), userId);
     }
 
     @Override

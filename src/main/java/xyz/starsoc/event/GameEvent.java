@@ -39,8 +39,7 @@ public class GameEvent extends SimpleListenerHost {
             }
         }
         if (plaintext.equals("")) return;
-        group.sendMessage(plaintext.substring(2));
         // 交给operation 处理
-        commands.put(new GameCommand(id, plaintext.substring(2)));
+        commands.put(new GameCommand(id, plaintext.substring(1)));
     }
 }

@@ -10,6 +10,7 @@ object Message : AutoSavePluginConfig("message"){
     val failJoin by value("加入游戏失败 你已经加入了/当前游戏已满")
     val successLeave by value("离开游戏成功 当前队列为 %nowPlayers%/%maxPlayers%")
     val failLeave by value("离开游戏失败 你没有加入游戏")
+    val alreadyCreate by value("创建失败，游戏已经创建了 你可以输入!md join加入游戏")
     val alreadyStart by value("操作失败，游戏已经开始了")
     val successStart by value("开始游戏成功 当前队列为 %nowPlayers%/%maxPlayers%")
     val willStart by value("当前游戏可以输入!md start 开始游戏")

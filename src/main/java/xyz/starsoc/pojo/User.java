@@ -25,6 +25,14 @@ public class User implements Comparator<User> {
         return resultDices;
     }
 
+    public void setResultDices(Dices resultDices) {
+        this.resultDices = resultDices;
+    }
+
+    public void setLockDices(Dices lockDices) {
+        this.lockDices = lockDices;
+    }
+
     public long getUserId() {
         return userId;
     }

@@ -14,7 +14,7 @@ public class Dices {
     }
 
     public void setDiceOne(int diceOne) {
-        DiceOne = diceOne;
+        DiceOne += diceOne;
         size += diceOne;
     }
 
@@ -23,7 +23,7 @@ public class Dices {
     }
 
     public void setDiceTwo(int diceTwo) {
-        DiceTwo = diceTwo;
+        DiceTwo += diceTwo;
         size += diceTwo;
     }
 
@@ -32,7 +32,7 @@ public class Dices {
     }
 
     public void setDiceThree(int diceThree) {
-        DiceThree = diceThree;
+        DiceThree += diceThree;
         size += diceThree;
     }
 
@@ -41,7 +41,7 @@ public class Dices {
     }
 
     public void setDiceFour(int diceFour) {
-        DiceFour = diceFour;
+        DiceFour += diceFour;
         size += diceFour;
     }
 
@@ -50,7 +50,7 @@ public class Dices {
     }
 
     public void setDiceSix(int diceSix) {
-        DiceSix = diceSix;
+        DiceSix += diceSix;
         size += diceSix;
     }
 
