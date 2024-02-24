@@ -11,9 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class GameData {
 
     public static final GameData INSTANCE = new GameData();
-
-    private int maxPlayers;
-    private int minPlayers;
+    private static final Config config = Config.INSTANCE;
 
     /** 玩家列表 -> 主要存储数据的地方 */
     private final HashMap<Long, User> playerList = new HashMap<>();
@@ -24,6 +22,7 @@ public class GameData {
     /** 指令队列 */
     private final ArrayBlockingQueue<GameCommand> commands = new ArrayBlockingQueue<>(100);
 
+    private long playBotId;
 
     private long playGroupId;
 
@@ -43,6 +42,14 @@ public class GameData {
         return commands;
     }
 
+    public long getPlayBotId() {
+        return playBotId;
+    }
+
+    public void setPlayBotId(long playBotId) {
+        this.playBotId = playBotId;
+    }
+
     public long getPlayGroupId() {
         return playGroupId;
     }
@@ -60,20 +67,13 @@ public class GameData {
     }
 
     public int getMaxPlayers() {
-        return maxPlayers;
-    }
-
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
+        return config.getMaxPlayers();
     }
 
     public int getMinPlayers() {
-        return minPlayers;
+        return config.getMinPlayers();
     }
 
-    public void setMinPlayers(int minPlayers) {
-        this.minPlayers = minPlayers;
-    }
 
 
     public boolean isWillEnd() {

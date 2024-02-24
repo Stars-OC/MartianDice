@@ -34,7 +34,7 @@ public class GroupMsg extends SimpleListenerHost {
             return;
         }
         String plain = event.getMessage().get(PlainText.Key).contentToString();
-        if (!(plain.startsWith("!火星骰") || plain.startsWith("！火星骰"))){
+        if (!(plain.startsWith("!火星骰") || plain.startsWith("！火星骰") || plain.startsWith("!md") || plain.startsWith("！md"))){
             return;
         }
 
@@ -44,7 +44,7 @@ public class GroupMsg extends SimpleListenerHost {
                 group.sendMessage(Message.INSTANCE.getHelp());
                 return;
             case "create":
-                group.sendMessage(operation.createGame(groupId,id));
+                group.sendMessage(operation.createGame(event.getBot().getId(),groupId,id));
                 return;
             case "join":
                 group.sendMessage(operation.joinGame(id));

@@ -5,8 +5,6 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.PlainText;
-import xyz.starsoc.MartianDice;
 import xyz.starsoc.core.impl.GameOperationImpl;
 import xyz.starsoc.file.Config;
 import xyz.starsoc.file.Message;
@@ -14,7 +12,10 @@ import xyz.starsoc.pojo.Dices;
 import xyz.starsoc.pojo.GameCommand;
 import xyz.starsoc.pojo.User;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class GameOperation implements GameOperationImpl {
@@ -35,13 +36,14 @@ public class GameOperation implements GameOperationImpl {
     }
 
     @Override
-    public String createGame(long groupId, long id) {
+    public String createGame(long botId, long groupId, long id) {
         if (!gameData.getPlayOrder().isEmpty()) return message.getAlreadyStart();
         playerList.clear();
         gameData.getCommands().clear();
         gameData.getPlayOrder().clear();
         gameData.getPlayerList().put(id, new User(id));
         gameData.setPlayGroupId(groupId);
+        gameData.setPlayBotId(botId);
         return message.getSuccessCreate().replace("%maxPlayers%", String.valueOf(gameData.getMaxPlayers()));
     }
 
@@ -233,21 +235,21 @@ public class GameOperation implements GameOperationImpl {
             int dice = (int) (Math.random() * 6) + 1;
             switch (dice){
                 case 1:
-                    resultDices.setDiceOne(dice);
+                    resultDices.setDiceOne(1);
                     break;
                 case 2:
-                    resultDices.setDiceTwo(dice);
+                    resultDices.setDiceTwo(1);
                     break;
                 case 3:
-                    resultDices.setDiceThree(dice);
+                    resultDices.setDiceThree(1);
                     break;
                 case 4:
                 case 5:
-                    resultDices.setDiceFour(dice);
+                    resultDices.setDiceFour(1);
                     break;
                 case 6:
-                    resultDices.setDiceSix(dice);
-                    lockDices.setDiceSix(dice);
+                    resultDices.setDiceSix(1);
+                    lockDices.setDiceSix(1);
             }
         }
         sendMessage(message.getSuccessRoll()
@@ -267,7 +269,7 @@ public class GameOperation implements GameOperationImpl {
     }
 
     private static Bot getBot() {
-        return Bot.getInstanceOrNull(Config.INSTANCE.getBot());
+        return Bot.getInstanceOrNull(gameData.getPlayBotId());
     }
 
     private Group getGroup() {
@@ -313,6 +315,13 @@ public class GameOperation implements GameOperationImpl {
 
     @Override
     public void endGame() {
-
+        List<User> userList = new ArrayList<>(playerList.values());
+        Collections.sort(userList,new User());
+        for (User user : userList){
+            sendMessage(message.getSuccessEnd()
+                    .replace("%result%", String.valueOf(user.getUserId()))
+                    .replace("%score%", String.valueOf(user.getScore()))
+            );
+        }
     }
 }

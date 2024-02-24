@@ -1,7 +1,6 @@
 package xyz.starsoc.core.impl;
 
 import xyz.starsoc.pojo.GameCommand;
-import xyz.starsoc.pojo.User;
 
 public interface GameOperationImpl {
 
@@ -9,7 +8,7 @@ public interface GameOperationImpl {
 
     void gameStart();
 
-    String createGame(long groupId, long id);
+    String createGame(long botId, long groupId, long id);
 
     String joinGame(long id);
 

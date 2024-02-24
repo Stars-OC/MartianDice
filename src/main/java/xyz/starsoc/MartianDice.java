@@ -4,6 +4,7 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
+import xyz.starsoc.core.GameOperation;
 import xyz.starsoc.event.GameEvent;
 import xyz.starsoc.event.GroupMsg;
 import xyz.starsoc.file.Config;

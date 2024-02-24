@@ -17,16 +17,16 @@ public class GameRunner implements GameRunnerImpl{
 
     private static final GameOperationImpl operation = GameOperation.INSTANCE;
 
-    private static final Config config = Config.INSTANCE;
+
 
     @Override
     public void init(){
-        gameData.setMinPlayers(config.getMinPlayers());
-        gameData.setMaxPlayers(config.getMaxPlayers());
+        System.out.println("初始化");
     }
 
     @Override
     public void start() {
+        System.out.println("开始");
         // 获取执行顺序
         gameData.getPlayerList().forEach((id, user) -> {
             gameData.getPlayOrder().add(id);
@@ -45,12 +45,14 @@ public class GameRunner implements GameRunnerImpl{
 
         // 设置第一个执行顺序
         int order = 0;
+
         while (true) {
+            System.out.println("run 保活 执行" + order);
             long userId = playOrder.get(order);
             gameData.setPlayingPlayer(userId);
             operation.guideGame(userId);
             try {
-                GameCommand take = commands.poll(30, TimeUnit.SECONDS);
+                GameCommand take = commands.poll(60, TimeUnit.SECONDS);
                 if (take == null){
                     // 玩家操作超时
                     order = order==playOrder.size()-1?0:order;
@@ -61,13 +63,14 @@ public class GameRunner implements GameRunnerImpl{
                     // 管理员停止游戏
                     break;
                 }
-                if (operation.runCommand(take) ) {
+                if (operation.runCommand(take)) {
                     // 结算
                     order = order==playOrder.size()-1 && gameData.isWillEnd()?0:++order;
                 }
 
             } catch (InterruptedException ignore) {}
             if (order >= playOrder.size()){
+                operation.endGame();
                 // 结束游戏
                 break;
             }
@@ -92,6 +95,7 @@ public class GameRunner implements GameRunnerImpl{
         gameData.getPlayOrder().clear();
         gameData.setPlayGroupId(0);
         gameData.setPlayingPlayer(0);
+        gameData.setPlayBotId(0);
     }
 
 

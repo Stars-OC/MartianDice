@@ -28,11 +28,19 @@ public class GameEvent extends SimpleListenerHost {
         if (groupId != gameData.getPlayGroupId()) return;
         if (!gameData.getPlayerList().containsKey(id)) return;
 
-        MessageChain messages = event.getMessage();
-        At at = (At) messages.get(At.Key);
-        if (at == null || at.getTarget() != event.getBot().getId()) return;
-        String plaintext = messages.get(PlainText.Key).contentToString();
+        String plaintext = "";
+        boolean at = false;
+        for (SingleMessage message : event.getMessage()){
+            if (message instanceof At && ((At) message).getTarget() == event.getBot().getId()) {
+                at = true;
+            }
+            if (message instanceof PlainText && at){
+                plaintext = message.contentToString();
+            }
+        }
+        if (plaintext.equals("")) return;
+        group.sendMessage(plaintext.substring(2));
         // 交给operation 处理
-        commands.put(new GameCommand(id, plaintext));
+        commands.put(new GameCommand(id, plaintext.substring(2)));
     }
 }

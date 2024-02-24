@@ -17,7 +17,7 @@ object Message : AutoSavePluginConfig("message"){
     val successKick by value("玩家 %player% 操作超时， 系统将其踢出游戏")
     val failCommand by value("当前不是你的回合，无法执行该操作")
 
-    val successRoll by value("你成功将骰子扔出，结果是: \n 人: %diceOne%  牛: %diceTwo%  鸡: %diceThree% \n 激光: %diceFour% 坦克: %diceSix%\n%diceSix% 坦克将被锁定，当前锁定 %lockSize%")
+    val successRoll by value("你成功将骰子扔出，结果是: \n 人: %diceOne%  牛: %diceTwo%  鸡: %diceThree% \n 激光: %diceFour% 坦克: %diceSix%\n%diceSix% 坦克将被锁定，当前锁定数量 %lockSize%")
     val failRoll by value("你已经把骰子都扔了，不能再扔了，已帮你跳过回合")
     val successLock by value("你成功将%dice%锁定，锁定的数量为 %diceSize%")
     val failLock by value("你已经锁定过%dice%了，不能再锁定了\n" +
@@ -37,5 +37,7 @@ object Message : AutoSavePluginConfig("message"){
             "‘1’是人面，‘2’是牛面，‘3’是鸡面，‘4’是激光面，‘6’是坦克面")
     val noLockGuide by value("轮到你的回合，请@我 发送 lock 骰子面(1,2,3,4,6) 锁定骰子\n你也可以发送 roll 再次投掷骰子\n或者发送 total 计算分数(会自动将你剩余的骰子进行计算)" +
             "\n‘1’是人面，‘2’是牛面，‘3’是鸡面，‘4’是激光面，‘6’是坦克面")
+
+    val successEnd by value("游戏结束，游戏结果如下\n" + "%result%")
     val noPermission by value("你没有权限执行该操作")
 }
