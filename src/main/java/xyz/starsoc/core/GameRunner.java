@@ -55,7 +55,7 @@ public class GameRunner implements GameRunnerImpl{
                 GameCommand take = commands.poll(60, TimeUnit.SECONDS);
                 if (take == null){
                     // 玩家操作超时
-                    order = order==playOrder.size()-1?0:order;
+                    order++;
                     operation.kickPlayer(userId);
                     continue;
                 }
@@ -65,13 +65,12 @@ public class GameRunner implements GameRunnerImpl{
                 }
                 if (operation.runCommand(take)) {
                     // 结算
-                    order = order==playOrder.size()-1 && gameData.isWillEnd()?0:++order;
+                    order++;
                 }
 
             } catch (InterruptedException ignore) {}
-            if (order >= playOrder.size()){
-                operation.endGame();
-                // 结束游戏
+            if (order >= playOrder.size()) {
+                // 游戏结束
                 break;
             }
         }

@@ -113,22 +113,21 @@ public class GameOperation implements GameOperationImpl {
                 }
                 return lock(userId,commands[1]);
             case "total":
-                getUserTotal(userId);
-                return true;
+                return getUserTotal(userId);
         }
         return false;
     }
 
-    private void getUserTotal(long userId) {
+    private boolean getUserTotal(long userId) {
         User user = playerList.get(userId);
         Dices resultDices = user.getResultDices();
         if (resultDices.getDiceSix() != 0){
             sendMessage(message.getMustLock(), userId);
-            return;
+            return false;
         }
         if (resultDices.getSize() != 0){
             sendMessage(message.getFailTotal());
-            return;
+            return false;
         }
         Dices lockDices = user.getLockDices();
         int diceFour = lockDices.getDiceFour();
@@ -153,10 +152,7 @@ public class GameOperation implements GameOperationImpl {
                 .replace("%lockSize%", String.valueOf(lockDices.getSize()))
                 .replace("%score%",score + "")
                 , userId);
-        if (user.getScore() > 25){
-            gameData.setWillEnd(true);
-            sendMessage(message.getWillEnd());
-        }
+        return true;
     }
 
     private void getUserInfo(long userId) {
@@ -247,7 +243,6 @@ public class GameOperation implements GameOperationImpl {
         int resultSize = 13 - lockSize;
         if (resultSize == 0) {
             sendMessage(message.getFailRoll(), userId);
-            getUserTotal(userId);
             return true;
         }
         Dices resultDices = user.getResultDices();
@@ -270,6 +265,7 @@ public class GameOperation implements GameOperationImpl {
                 case 6:
                     resultDices.setDiceSix(1);
                     lockDices.setDiceSix(1);
+
             }
         }
         sendMessage(message.getSuccessRoll()
@@ -281,6 +277,9 @@ public class GameOperation implements GameOperationImpl {
                 .replace("%lockSize%", String.valueOf(lockDices.getSize()))
                 ,userId);
 
+        if (lockDices.getSize() == 13){
+            return getUserTotal(userId);
+        }
         return false;
     }
 
@@ -344,11 +343,16 @@ public class GameOperation implements GameOperationImpl {
     public void endGame() {
         List<User> userList = new ArrayList<>(playerList.values());
         Collections.sort(userList,new User());
+        String msg = "";
         for (User user : userList){
-            sendMessage(message.getSuccessEnd()
-                    .replace("%result%", String.valueOf(user.getUserId()))
-                    .replace("%score%", String.valueOf(user.getScore()))
-            );
+           msg += message.getSuccessEndFormat()
+                   .replace("%player%", String.valueOf(user.getUserId()))
+                   .replace("%score%", String.valueOf(user.getScore()));
         }
+        sendMessage(message.getSuccessEnd()
+                .replace("%won%",userList.get(0).getUserId() + "")
+                .replace("%result%", msg)
+
+        );
     }
 }

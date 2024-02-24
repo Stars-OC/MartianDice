@@ -44,6 +44,7 @@ object Message : AutoSavePluginConfig("message"){
     val noLockGuide by value("轮到你的回合，请@我 发送 lock 骰子面(1,2,3,4,6) 锁定骰子\n你也可以发送 roll 再次投掷骰子\n或者发送 total 计算分数(会自动将你剩余的骰子进行计算)" +
             "\n‘1’是人面，‘2’是牛面，‘3’是鸡面，‘4’是激光面，‘6’是坦克面")
 
-    val successEnd by value("游戏结束，游戏结果如下\n" + "%result%")
+    val successEnd by value("游戏结束，游戏结果如下\n" + "玩家 %won% 获胜\n" + " %result%")
+    val successEndFormat by value("玩家 %player% 的分数为 %score%\n")
     val noPermission by value("你没有权限执行该操作")
 }

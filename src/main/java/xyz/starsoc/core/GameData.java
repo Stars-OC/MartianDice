@@ -28,7 +28,6 @@ public class GameData {
 
     private long playingPlayer;
 
-    private boolean willEnd = false;
 
     public HashMap<Long, User> getPlayerList() {
         return playerList;
@@ -74,13 +73,4 @@ public class GameData {
         return config.getMinPlayers();
     }
 
-
-
-    public boolean isWillEnd() {
-        return willEnd;
-    }
-
-    public void setWillEnd(boolean willEnd) {
-        this.willEnd = willEnd;
-    }
 }
