@@ -8,7 +8,6 @@ public class Dices {
     private int DiceSix;
     private int size;
 
-    private int score;
 
     public int getDiceOne() {
         return DiceOne;
@@ -60,11 +59,4 @@ public class Dices {
     }
 
 
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
 }

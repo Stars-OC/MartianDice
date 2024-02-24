@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class GameRunner implements GameRunnerImpl , Runnable{
+public class GameRunner implements GameRunnerImpl{
 
     private static final GameData gameData = GameData.INSTANCE;
 
@@ -29,7 +29,7 @@ public class GameRunner implements GameRunnerImpl , Runnable{
     public void start() {
         // 获取执行顺序
         gameData.getPlayerList().forEach((id, user) -> {
-            gameData.getPlayOrder().add(user);
+            gameData.getPlayOrder().add(id);
         });
 
 
@@ -41,30 +41,36 @@ public class GameRunner implements GameRunnerImpl , Runnable{
         init();
         start();
         ArrayBlockingQueue<GameCommand> commands = gameData.getCommands();
-        ArrayList<User> playOrder = gameData.getPlayOrder();
+        ArrayList<Long> playOrder = gameData.getPlayOrder();
 
         // 设置第一个执行顺序
         int order = 0;
         while (true) {
-            User user = playOrder.get(order);
-            gameData.setPlayingPlayer(user.getUserId());
+            long userId = playOrder.get(order);
+            gameData.setPlayingPlayer(userId);
+            operation.guideGame(userId);
             try {
                 GameCommand take = commands.poll(30, TimeUnit.SECONDS);
                 if (take == null){
                     // 玩家操作超时
-                    order++;
-                    operation.kickPlayer(user.getUserId());
+                    order = order==playOrder.size()-1?0:order;
+                    operation.kickPlayer(userId);
                     continue;
                 }
-                if (take.getCommand().equals("stop") && user.getUserId() == 0){
+                if (take.getCommand().equals("stop") && userId == 0){
+                    // 管理员停止游戏
                     break;
                 }
-                if (operation.runCommand(take)) {
+                if (operation.runCommand(take) ) {
                     // 结算
-                    order++;
+                    order = order==playOrder.size()-1 && gameData.isWillEnd()?0:++order;
                 }
-            } catch (InterruptedException ignore) {}
 
+            } catch (InterruptedException ignore) {}
+            if (order >= playOrder.size()){
+                // 结束游戏
+                break;
+            }
         }
 
         stop();
@@ -75,6 +81,7 @@ public class GameRunner implements GameRunnerImpl , Runnable{
 
     @Override
     public void stop() {
+        operation.endGame();
         operation.saveData();
     }
 
@@ -85,7 +92,6 @@ public class GameRunner implements GameRunnerImpl , Runnable{
         gameData.getPlayOrder().clear();
         gameData.setPlayGroupId(0);
         gameData.setPlayingPlayer(0);
-        gameData.setPlayerOperation(0);
     }
 
 

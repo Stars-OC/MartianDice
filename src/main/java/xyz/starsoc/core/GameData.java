@@ -15,11 +15,11 @@ public class GameData {
     private int maxPlayers;
     private int minPlayers;
 
-    /** 玩家列表 */
+    /** 玩家列表 -> 主要存储数据的地方 */
     private final HashMap<Long, User> playerList = new HashMap<>();
 
     /** 玩家操作顺序 */
-    private final ArrayList<User> playOrder = new ArrayList<>();
+    private final ArrayList<Long> playOrder = new ArrayList<>();
 
     /** 指令队列 */
     private final ArrayBlockingQueue<GameCommand> commands = new ArrayBlockingQueue<>(100);
@@ -29,13 +29,13 @@ public class GameData {
 
     private long playingPlayer;
 
-    private int playerOperation;
+    private boolean willEnd = false;
 
     public HashMap<Long, User> getPlayerList() {
         return playerList;
     }
 
-    public ArrayList<User> getPlayOrder() {
+    public ArrayList<Long> getPlayOrder() {
         return playOrder;
     }
 
@@ -75,15 +75,12 @@ public class GameData {
         this.minPlayers = minPlayers;
     }
 
-    public int getPlayerOperation() {
-        return playerOperation;
+
+    public boolean isWillEnd() {
+        return willEnd;
     }
 
-    public void setPlayerOperation(int playerOperation) {
-        this.playerOperation = playerOperation;
+    public void setWillEnd(boolean willEnd) {
+        this.willEnd = willEnd;
     }
-
-
-
-
 }

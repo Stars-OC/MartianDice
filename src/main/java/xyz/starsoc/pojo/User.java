@@ -1,15 +1,30 @@
 package xyz.starsoc.pojo;
 
 public class User {
+
     private long userId;
-    private Dices dices;
+
+    private Dices lockDices;
+
+    private Dices resultDices;
+
+    private int score = 0;
 
     public User(long id) {
         this.userId = id;
-        this.dices = new Dices();
+        this.lockDices = new Dices();
+        this.resultDices = new Dices();
     }
 
     public User() {
+    }
+
+    public Dices getResultDices() {
+        return resultDices;
+    }
+
+    public void setResultDices(Dices resultDices) {
+        this.resultDices = resultDices;
     }
 
     public long getUserId() {
@@ -20,11 +35,19 @@ public class User {
         this.userId = userId;
     }
 
-    public Dices getDices() {
-        return dices;
+    public Dices getLockDices() {
+        return lockDices;
     }
 
-    public void setDices(Dices dices) {
-        this.dices = dices;
+    public void setLockDices(Dices lockDices) {
+        this.lockDices = lockDices;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

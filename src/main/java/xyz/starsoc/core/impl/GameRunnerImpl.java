@@ -1,6 +1,6 @@
 package xyz.starsoc.core.impl;
 
-public interface GameRunnerImpl {
+public interface GameRunnerImpl extends Runnable{
     void init();
 
     void start();
