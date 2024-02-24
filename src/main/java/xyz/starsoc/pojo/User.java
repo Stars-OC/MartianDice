@@ -4,6 +4,14 @@ public class User {
     private long userId;
     private Dices dices;
 
+    public User(long id) {
+        this.userId = id;
+        this.dices = new Dices();
+    }
+
+    public User() {
+    }
+
     public long getUserId() {
         return userId;
     }

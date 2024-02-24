@@ -4,9 +4,11 @@ import xyz.starsoc.pojo.GameCommand;
 
 public interface GameOperationImpl {
 
-    void startGame();
+    String startGame();
 
-    String createGame(long payerId);
+    void gameStart();
+
+    String createGame(long groupId, long id);
 
     String joinGame(long id);
 
@@ -14,11 +16,12 @@ public interface GameOperationImpl {
 
     String infoGame(long groupId);
 
-    String stopGame(long groupId);
+    void stopGame();
 
-    String startGame(long groupId);
 
     boolean runCommand(GameCommand take);
 
     void saveData();
+
+    void kickPlayer(long userId);
 }

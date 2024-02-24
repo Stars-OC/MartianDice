@@ -44,13 +44,16 @@ public class GroupMsg extends SimpleListenerHost {
                 group.sendMessage(Message.INSTANCE.getHelp());
                 return;
             case "create":
-                group.sendMessage(operation.createGame(id));
+                group.sendMessage(operation.createGame(groupId,id));
                 return;
             case "join":
                 group.sendMessage(operation.joinGame(id));
                 return;
             case "leave":
                 group.sendMessage(operation.leaveGame(id));
+                return;
+            case "start":
+                group.sendMessage(operation.startGame());
                 return;
             case "info":
                 group.sendMessage(operation.infoGame(groupId));
@@ -63,10 +66,8 @@ public class GroupMsg extends SimpleListenerHost {
 
         switch (commands[1]){
             case "stop":
-                group.sendMessage(operation.stopGame(groupId));
-                return;
-            case "start":
-                group.sendMessage(operation.startGame(groupId));
+                operation.stopGame();
+                group.sendMessage("成功结束该游戏");
                 return;
             case "addPer":
                 return;

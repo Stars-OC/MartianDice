@@ -34,6 +34,7 @@ public class GameEvent extends SimpleListenerHost {
         At at = (At) messages.get(At.Key);
         if (at == null || at.getTarget() != event.getBot().getId()) return;
         String plaintext = messages.get(PlainText.Key).contentToString();
+        // 可能有并发问题
         if (gameData.getPlayingPlayer() == id){
             gameData.setPlayingPlayer(0);
 

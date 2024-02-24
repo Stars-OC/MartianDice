@@ -6,6 +6,7 @@ import xyz.starsoc.file.Config;
 import xyz.starsoc.pojo.GameCommand;
 import xyz.starsoc.pojo.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -25,30 +26,50 @@ public class GameRunner implements GameRunnerImpl , Runnable{
     }
 
     @Override
-    public void create() {
-        gameData.getPlayerList().clear();
-        gameData.getCommands().clear();
+    public void start() {
+        // 获取执行顺序
+        gameData.getPlayerList().forEach((id, user) -> {
+            gameData.getPlayOrder().add(user);
+        });
+
+
     }
 
     @Override
     public void run() {
+
         init();
-        create();
+        start();
         ArrayBlockingQueue<GameCommand> commands = gameData.getCommands();
-        try {
-            while (true) {
+        ArrayList<User> playOrder = gameData.getPlayOrder();
+
+        // 设置第一个执行顺序
+        int order = 0;
+        while (true) {
+            User user = playOrder.get(order);
+            gameData.setPlayingPlayer(user.getUserId());
+            try {
                 GameCommand take = commands.poll(30, TimeUnit.SECONDS);
-                if (operation.runCommand(take)) {
-                    // 如果操作成功，可以考虑返回或退出循环
-                    return; // 或者使用 break
+                if (take == null){
+                    // 玩家操作超时
+                    order++;
+                    operation.kickPlayer(user.getUserId());
+                    continue;
                 }
-            }
-        } catch (InterruptedException ignored) {
-        } finally {
-            // 确保在退出之前执行资源清理
-            stop();
-            destroy();
+                if (take.getCommand().equals("stop") && user.getUserId() == 0){
+                    break;
+                }
+                if (operation.runCommand(take)) {
+                    // 结算
+                    order++;
+                }
+            } catch (InterruptedException ignore) {}
+
         }
+
+        stop();
+        destroy();
+
     }
 
 
@@ -61,6 +82,7 @@ public class GameRunner implements GameRunnerImpl , Runnable{
     public void destroy() {
         gameData.getPlayerList().clear();
         gameData.getCommands().clear();
+        gameData.getPlayOrder().clear();
         gameData.setPlayGroupId(0);
         gameData.setPlayingPlayer(0);
         gameData.setPlayerOperation(0);

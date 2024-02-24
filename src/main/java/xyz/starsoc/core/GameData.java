@@ -4,6 +4,7 @@ import xyz.starsoc.file.Config;
 import xyz.starsoc.pojo.GameCommand;
 import xyz.starsoc.pojo.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -14,9 +15,15 @@ public class GameData {
     private int maxPlayers;
     private int minPlayers;
 
+    /** 玩家列表 */
     private final HashMap<Long, User> playerList = new HashMap<>();
 
+    /** 玩家操作顺序 */
+    private final ArrayList<User> playOrder = new ArrayList<>();
+
+    /** 指令队列 */
     private final ArrayBlockingQueue<GameCommand> commands = new ArrayBlockingQueue<>(100);
+
 
     private long playGroupId;
 
@@ -26,6 +33,10 @@ public class GameData {
 
     public HashMap<Long, User> getPlayerList() {
         return playerList;
+    }
+
+    public ArrayList<User> getPlayOrder() {
+        return playOrder;
     }
 
     public ArrayBlockingQueue<GameCommand> getCommands() {

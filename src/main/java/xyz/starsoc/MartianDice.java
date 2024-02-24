@@ -1,5 +1,6 @@
 package xyz.starsoc;
 
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import xyz.starsoc.file.Config;
